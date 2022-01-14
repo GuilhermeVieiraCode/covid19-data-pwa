@@ -1,19 +1,14 @@
-import React, { memo, useState, useCallback, useEffect } from 'react';
-import Api from '../../services/api';
+import React, { memo, useState, useEffect } from 'react';
 import { ContainerStyled } from './style';
 import Board from './components/Board';
 import Panel from './components/Panel'
+import useCovidApi from '../../services/hooks';
 
 function Main(){
-    const [data, setData] = useState({});
+    const { dataState, getCovidData } = useCovidApi();
+
     const [country, setCountry] = useState('brazil');
     const updatedAt = new Date().toLocaleString();
-
-    const getCovidData = useCallback((country) => {
-        Api
-            .getCountry(country)
-            .then(data => setData(data))
-    }, []);
 
     useEffect(() => {
         getCovidData(country)
@@ -28,14 +23,14 @@ function Main(){
         <ContainerStyled>
             <div className='mb-2'>
                 <Panel
-                    data={data}
+                    data={dataState}
                     updatedAt={updatedAt}
                     onChange={handleChange}
                     country={country}
                     getCovidData={getCovidData}
                 />
             </div>
-            <Board data={data}/>
+            <Board data={dataState}/>
         </ContainerStyled>
     );
 };
